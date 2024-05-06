@@ -139,34 +139,71 @@ GROUP BY id_coordinador;
 --Consultas sobre la Base de Datos de Voluntariado: 
 --1)Realice un listado donde, por cada voluntario, se indique las distintas instituciones y tareas 
 --  que ha desarrollado (considere los datos históricos). 
+SELECT nro_voluntario, COUNT(DISTINCT id_institucion), COUNT(DISTINCT id_tarea)
+FROM historico
+GROUP BY nro_voluntario
 
 --2)Muestre el apellido, la tarea y las horas aportadas de todos los voluntarios cuyas tareas sean 
 --  de “SA_REP” o “ST_CLERK” y cuyas horas aportadas no sean iguales a 2.500, 3.500 ni 7.000.
+SELECT apellido, id_tarea, horas_aportadas
+FROM voluntario
+WHERE (id_tarea = 'SA_REP' OR id_tarea = 'ST_CLERK')
+    AND horas_aportadas != 2500
+    AND horas_aportadas != 3500
+    AND horas_aportadas != 7000;
+--Una manera más abreviada:
+WHERE (id_tarea = 'SA_REP' OR id_tarea = 'ST_CLERK')
+    AND horas_aportadas NOT IN (2500, 3500, 7000);
 
 --3)Muestre los datos completos de las instituciones que posean director. 
+SELECT *
+FROM institucion
+WHERE id_director IS NOT NULL;
 
 --4)Muestre el apellido e identificador de la tarea de todos los voluntarios que no tienen coordinador.
+SELECT apellido, id_tarea
+FROM voluntario
+WHERE id_coordinador IS NOT NULL;
 
 --5)Muestre el apellido, las horas aportadas y el porcentaje de donación para todos los voluntarios que 
 --  aportan horas (aporte > 0 o distinto de nulo). Ordene los datos de forma descendente según las 
 --  horas aportadas y porcentajes de donaciones.
+SELECT apellido, horas_aportadas, porcentaje
+FROM voluntario
+WHERE horas_aportadas>0
+ORDER BY horas_aportadas DESC, porcentaje;
 
 --6)Liste los identificadores de aquellos coordinadores que coordinan a más de 8 voluntarios.
-
+SELECT id_coordinador, COUNT(nro_voluntario)
+FROM voluntario
+GROUP BY id_coordinador
+HAVING COUNT(nro_voluntario) > 8;
 
 --7)Muestre el identificador de las instituciones y la cantidad de voluntarios que trabajan en 
 --  ellas, sólo de aquellas instituciones que tengan más de 10 voluntarios.
-
+SELECT id_institucion, COUNT(nro_voluntario)
+FROM voluntario
+GROUP BY id_institucion
+HAVING COUNT(nro_voluntario) > 10;
 
 
 -------------------------------------------------------------------------------------------------------
 --Consultas sobre la Base de Distribución de Películas:
 --8)Liste los apellidos, nombres y e-mails de los empleados con cuentas de gmail y cuyo sueldo sea 
 --  superior a 1000. 
+SELECT apellido, nombre, e_mail
+FROM empleado
+WHERE e_mail like '%gmail%' AND sueldo > 1000;
 
 --9)Muestre los códigos de películas que han recibido entre 3 y 5 entregas. (cantidad de entregas, 
 --  NO cantidad de películas entregadas) 
 
 --10)Liste la cantidad de películas que hay por cada idioma. 
+SELECT idioma, COUNT(codigo_pelicula)
+FROM pelicula
+GROUP BY idioma;
 
 --11)Calcule la cantidad de empleados por departamento. 
+SELECT id_departamento, COUNT(id_empleado)
+FROM empleado
+GROUP BY id_departamento;

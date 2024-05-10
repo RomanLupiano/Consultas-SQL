@@ -1,3 +1,13 @@
+--Contenidos---
+--Consultas (simples) a la base de datos mediante SQL. Sentencia SELECT.
+--Eliminación de  elementos repetidos, clausula DISTINCT.
+--Condiciones de comparación. Operadores aritméticos y lógicos. Otros operadores: LIKE; IS [NOT] NULL.
+--Orden en la presentación de las tuplas de salida. Cláusula ORDER BY.
+--Funciones de grupo o Agrupamiento: MIN, MAX, COUNT, AVG, COUNT, SUM, STDDEV.
+--Funciones de agregación: cláusula GROUP BY. Restricciones sobre los grupos: cláusula HAVING.
+-------------------------------------------------------------------------------------------------------
+
+
 --Consultas con DISTINCT
 --1) Liste los códigos de las distintas tareas que están realizando actualmente los voluntarios.
 SELECT DISTINCT id_tarea from voluntario;
@@ -197,6 +207,9 @@ WHERE e_mail like '%gmail%' AND sueldo > 1000;
 
 --9)Muestre los códigos de películas que han recibido entre 3 y 5 entregas. (cantidad de entregas, 
 --  NO cantidad de películas entregadas) 
+SELECT codigo_pelicula
+FROM renglon_entrega
+WHERE cantidad BETWEEN 3 AND 5;
 
 --10)Liste la cantidad de películas que hay por cada idioma. 
 SELECT idioma, COUNT(codigo_pelicula)

@@ -27,9 +27,27 @@ WHERE (his.fecha_fin <= make_date(2000, 1, 1))
 
 --3)Indique nombre, id y dirección completa de las instituciones que no poseen voluntarios con 
 --  aporte de horas mayor o igual que el máximo de horas de la tarea que realiza. 
+SELECT nombre_institucion, id_institucion, dir.calle, dir.provincia, dir.ciudad, pais.nombre_pais
+FROM institucion
+   JOIN direccion dir USING (id_direccion)
+   JOIN pais USING (id_pais)
+WHERE id_institucion not in (
+SELECT DISTINCT id_institucion
+FROM voluntario vol
+WHERE horas_aportadas >= (SELECT max_horas FROM tarea tar
+                          where tar.id_tarea = vol.id_tarea))
 
 --4)Liste en orden alfabético los nombres de los países que nunca han tenido acción de voluntarios 
 --  (considerando sólo información histórica, no tener en cuenta los voluntarios actuales).
+SELECT DISTINCT nombre_pais 
+FROM institucion 
+    JOIN direccion dir USING (id_direccion)
+    JOIN pais USING (id_pais)
+WHERE id_institucion NOT IN 
+    (SELECT id_institucion
+     FROM voluntario
+     WHERE nro_voluntario in (select nro_voluntario from historico))
+ORDER BY nombre_pais;
 
 --5)Indique los datos de las tareas que se han desarrollado históricamente y que no se están 
 --  desarrollando actualmente.

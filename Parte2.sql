@@ -51,10 +51,30 @@ ORDER BY nombre_pais;
 
 --5)Indique los datos de las tareas que se han desarrollado históricamente y que no se están 
 --  desarrollando actualmente.
+SELECT id_tarea, fecha_inicio, fecha_fin 
+FROM historico
+WHERE id_tarea NOT IN (SELECT DISTINCT id_tarea FROM voluntario);
 
 --6)Liste el id, nombre y máxima cantidad de horas de las tareas que se están ejecutando solo 
 --  una vez y que actualmente la están realizando voluntarios de la ciudad ‘Munich’. Ordene 
 --  por id de tarea.
+
+SELECT id_tarea, nombre_tarea, max_horas 
+FROM tarea
+WHERE id_tarea NOT IN (SELECT id_tarea FROM historico)
+AND id_tarea in 
+    (SELECT id_tarea
+    FROM voluntario
+    WHERE id_institucion in 
+            (SELECT id_institucion 
+            FROM institucion
+            WHERE id_direccion in 
+                    (SELECT id_direccion 
+                    FROM direccion 
+                    WHERE ciudad = 'Munich')))
+ORDER BY id_tarea;
+
+
 
 --7)Indique los datos de las instituciones que poseen director, donde históricamente se hayan 
 --  desarrollado tareas que actualmente las estén ejecutando voluntarios de otras instituciones.

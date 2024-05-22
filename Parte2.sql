@@ -74,11 +74,53 @@ AND id_tarea in
                     WHERE ciudad = 'Munich')))
 ORDER BY id_tarea;
 
-
-
 --7)Indique los datos de las instituciones que poseen director, donde históricamente se hayan 
 --  desarrollado tareas que actualmente las estén ejecutando voluntarios de otras instituciones.
 
+
+
 --8)Liste los datos completos de todas las instituciones junto con el apellido y nombre de su 
 --  director, si poseen.
+SELECT ins.id_institucion, ins.nombre_institucion, ins.id_director, ins.id_direccion, vol.apellido, vol.nombre FROM institucion ins
+    JOIN voluntario vol ON (ins.id_director = vol.nro_voluntario);
+
+
+
+-------------------------------------------------------------------------------------------------------
+--Considere el esquema de Películas (Figura 2 del TP2-P1) y resuelva las siguientes consultas en SQL:
+--9)Para cada uno de los empleados indique su id, nombre y apellido junto con el id, nombre y 
+--  apellido de su jefe, en caso de tenerlo.
+SELECT emp.id_empleado, emp.nombre, emp.apellido, jefe.id_empleado as "Jefe id", jefe.nombre as "Jefe nombre", jefe.apellido as "Jefe apellido" 
+FROM empleado emp 
+   JOIN empleado jefe ON (emp.id_jefe = jefe.id_empleado)
+WHERE emp.id_jefe IS NOT NULL;
+
+
+--10)Determine los ids, nombres y apellidos de los empleados que son jefes y cuyos departamentos 
+--   donde se desempeñan se encuentren en la ciudad ‘Rawalpindi’. Ordene los datos por los ids. 
+SELECT id_empleado, nombre, apellido 
+FROM empleado 
+WHERE id_empleado IN (SELECT id_jefe FROM empleado WHERE id_jefe IS NOT NULL)
+AND id_empleado 
+  IN (SELECT jefe_departamento FROM departamento 
+      WHERE id_ciudad = (SELECT id_ciudad FROM ciudad 
+                         WHERE nombre_ciudad = 'Rawalpindi')) 
+ORDER BY id_empleado;
+
+--11)Liste los ids y números de inscripción de los distribuidores nacionales que hayan entregado 
+--   películas en idioma Español luego del año 2010.
+
+
+--12)Liste las películas que nunca han sido entregadas por un distribuidor nacional.
+
+
+--13)Liste el apellido y nombre de los empleados que trabajan en departamentos residentes en el
+--   país Argentina y donde el jefe de departamento posee más del 40% de comisión.
+
+--14)Indique los departamentos (nombre e identificador completo) que tienen más de 3 empleados con
+--   tareas con sueldo mínimo menor a 6000. Muestre el resultado ordenado por distribuidor.
+
+
+--15)Liste los datos de los departamentos en los que trabajan menos del 10 % de los empleados que 
+--   hay registrados.
 

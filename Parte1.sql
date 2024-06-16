@@ -54,7 +54,7 @@ FROM distribuidor
 WHERE tipo = 'I' AND telefono is null;
 
 --3)Seleccione la clave y el nombre de los departamentos sin jefe.
-SELECT id_departamento, nombre
+SELECT id_departamento, id_distribuidor
 FROM departamento
 WHERE jefe_departamento is null;
 
@@ -140,9 +140,10 @@ GROUP BY nro_voluntario;
 
 --5)Se quiere conocer los coordinadores que tienen a su cargo menos de 3 voluntarios dentro 
 --  de cada institución.
-SELECT id_coordinador, COUNT(nro_voluntario)
+SELECT id_coordinador, COUNT(nro_voluntario) AS "Voluntarios a cargo"
 FROM voluntario
-GROUP BY id_coordinador;
+GROUP BY id_coordinador
+HAVING COUNT(nro_voluntario) < 3;
 
 
 -------------------------------------------------------------------------------------------------------
@@ -173,14 +174,14 @@ WHERE id_director IS NOT NULL;
 --4)Muestre el apellido e identificador de la tarea de todos los voluntarios que no tienen coordinador.
 SELECT apellido, id_tarea
 FROM voluntario
-WHERE id_coordinador IS NOT NULL;
+WHERE id_coordinador IS NULL;
 
 --5)Muestre el apellido, las horas aportadas y el porcentaje de donación para todos los voluntarios que 
 --  aportan horas (aporte > 0 o distinto de nulo). Ordene los datos de forma descendente según las 
 --  horas aportadas y porcentajes de donaciones.
 SELECT apellido, horas_aportadas, porcentaje
 FROM voluntario
-WHERE horas_aportadas>0
+WHERE horas_aportadas > 0 AND horas_aportadas IS NOT NULL
 ORDER BY horas_aportadas DESC, porcentaje;
 
 --6)Liste los identificadores de aquellos coordinadores que coordinan a más de 8 voluntarios.

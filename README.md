@@ -1,1 +1,1 @@
-# Consultas-SQL
+# Algunas consultas de PostgreSQL

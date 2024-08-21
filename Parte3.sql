@@ -104,14 +104,33 @@ GROUP BY d.id_distribuidor
 
 --14)Para cada uno de los empleados registrados en la base, liste su apellido junto con el apellido de su jefe, en caso de tenerlo, 
 --   sino incluya la expresión ‘(no posee)’. Ordene el resultado por el apellido del empleado.
+SELECT e.apellido, COALESCE(j.apellido, '(No posee)')
+FROM empleado e
+     LEFT JOIN empleado j on (e.id_jefe = j.id_empleado)
+ORDER BY e.apellido
 
 --15)Liste el id y nombre de todos los distribuidores existentes junto con la cantidad de videos a los que han realizado entregas.
-
+SELECT d.id_distribuidor, d.nombre, count(e.nro_entrega)
+FROM distribuidor d
+     LEFT JOIN entrega e on (d.id_distribuidor = e.id_distribuidor)
+GROUP BY d.id_distribuidor
 
 
 
 --Consultas para resolver con subconsultas (IN, NOT IN, EXISTS, NOT EXISTS).
 --16)Liste los datos de las películas que nunca han sido entregadas por un distribuidor nacional.
+SELECT codigo_pelicula, titulo, idioma
+FROM pelicula
+WHERE codigo_pelicula NOT IN (
+    SELECT codigo_pelicula FROM renglon_entrega
+    WHERE nro_entrega in (
+        SELECT nro_entrega FROM entrega
+        WHERE id_distribuidor in (
+             SELECT id_distribuidor FROM distribuidor
+             WHERE tipo = 'N'
+        )
+    )
+)
 
 --17)Indicar los departamentos (nombre e identificador completo) que tienen más de 3 empleados realizando tareas de sueldo mínimo inferior a 6000. 
 ---  Mostrar el resultado ordenado por el id de departamento.

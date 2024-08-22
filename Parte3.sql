@@ -134,10 +134,51 @@ WHERE codigo_pelicula NOT IN (
 
 --17)Indicar los departamentos (nombre e identificador completo) que tienen más de 3 empleados realizando tareas de sueldo mínimo inferior a 6000. 
 ---  Mostrar el resultado ordenado por el id de departamento.
+SELECT id_departamento, id_distribuidor, nombre
+FROM departamento
+WHERE (id_departamento, id_distribuidor) IN (
+     SELECT id_departamento, id_distribuidor
+     FROM empleado e
+          JOIN tarea t ON (e.id_tarea = t.id_tarea)
+     WHERE t.sueldo_minimo < 6000 
+     GROUP BY id_departamento, id_distribuidor
+     HAVING count(e.id_empleado) > 3
+)
+--Otra manera
+SELECT id_departamento, id_distribuidor, nombre
+FROM departamento d
+WHERE EXISTS (
+    SELECT 1
+    FROM empleado e
+         JOIN tarea t ON e.id_tarea = t.id_tarea
+    WHERE d.id_departamento = e.id_departamento 
+          AND d.id_distribuidor = e.id_distribuidor
+          AND t.sueldo_minimo < 6000
+    GROUP BY e.id_departamento, e.id_distribuidor
+    HAVING COUNT(e.id_empleado) > 3
+)
 
 --18)Liste los datos de los Departamentos en los que trabajan menos del 10 % de los empleados registrados.
+SELECT id_departamento, e.id_distribuidor, count(*)
+FROM empleado e
+GROUP BY e.id_departamento, e.id_distribuidor
+HAVING (COUNT(*)*10)/100 >= (
+                 SELECT COUNT(*) 
+                 FROM empleado d
+                 WHERE d.sueldo IS NULL 
+                 AND d.id_departamento = e.id_departamento
+                 AND d.id_distribuidor = e.id_distribuidor
+) --- CORREGIR
 
 --19)Encuentre el/los departamento/s con la mayor cantidad de empleados.
+SELECT id_departamento, id_distribuidor, nombre 
+FROM departamento
+WHERE (id_departamento, id_distribuidor) in (
+SELECT id_departamento, id_distribuidor
+FROM empleado e
+GROUP BY id_departamento, id_distribuidor
+ORDER BY count(*) DESC
+LIMIT 10)
 
 --20)Resuelva los servicios del grupo anterior mediante consultas anidadas, en caso que sea posible.
 

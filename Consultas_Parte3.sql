@@ -180,46 +180,47 @@ GROUP BY id_departamento, id_distribuidor
 ORDER BY count(*) DESC
 LIMIT 10)
 
---20)Resuelva los servicios del grupo anterior mediante consultas anidadas, en caso que sea posible.
-
-
-
-
---Consultas para resolver con operadores de conjuntos (o simulando la operación)
---21)Encuentre los id de distribuidor correspondientes a distribuidores que no han realizado entregas.
-
---22)Verifique si hay empleados que son jefes de otro/s empleado/s y que además son jefes de algún departamento.
-
---23)Liste los datos personales de todos los distribuidores (nacionales e internacionales) junto con el encargado, para el caso de distribuidores nacionales. 
-
---24)Determine si hay distribuidores que han realizado entregas de películas a todos los videos.
-
 
 --Interpretación de resultados donde intervienen valores nulos
 --Analice los resultados de los siguientes grupos de consultas: 
+SELECT avg(porcentaje), count(porcentaje), count(*)
+FROM voluntario;
+--RTA: count(*) -> 117 registros reales + nulos
+--     count(porcetaje) -> 45 registros reales (ignora los nulos)
+--     avg(porcentaje) -> 0.2640 (ignora los nulos)
 
-      A.1   SELECT avg(porcentaje), count(porcentaje), count(*)
-  	      FROM voluntario;
-
-      A.2      SELECT avg(porcentaje), count(porcentaje), count(*)
-        FROM voluntario WHERE porcentaje IS NOT NULL;
+SELECT avg(porcentaje), count(porcentaje), count(*)
+FROM voluntario WHERE porcentaje IS NOT NULL;
+--RTA: count(*) -> 45 registros reales
+--     count(porcetaje) -> 45 registros reales (ignora los nulos)
+--     avg(porcentaje) -> 0.2640 (ignora los nulos)
  
-      A.3      SELECT avg(porcentaje), count(porcentaje), count(*)
-        FROM voluntario WHERE porcentaje IS NULL;
+SELECT avg(porcentaje), count(porcentaje), count(*)
+FROM voluntario WHERE porcentaje IS NULL;
+--RTA: count(*) -> 72 registros nulos
+--     count(porcetaje) -> 0 registros reales (ignora los nulos)
+--     avg(porcentaje) -> NULL (ignora los nulos)
 
-      B.1      SELECT * FROM voluntario 
-        WHERE nro_voluntario NOT IN (SELECT id_director FROM institucion);
+SELECT * FROM voluntario 
+WHERE nro_voluntario NOT IN (SELECT id_director FROM institucion);
+--RTA: no devuelve valores porque la subquery tiene nulos en su interior
 
-      B.2      SELECT * FROM voluntario 
-        WHERE nro_voluntario NOT IN (SELECT id_director FROM institucion
-                                       WHERE id_director IS NOT NULL);
+SELECT * FROM voluntario 
+WHERE nro_voluntario NOT IN (SELECT id_director FROM institucion
+                              WHERE id_director IS NOT NULL);
+--RTA: devuelve 107 registros, no hay conflictos porque la subquery no puede devolver nulos
 
-      C.1      SELECT i.id_institucion, count(*)
-        FROM institucion i LEFT JOIN voluntario v
-        ON (i.id_institucion = v.id_institucion)
-        GROUP BY  i.id_institucion;
 
-      C.2      SELECT v.id_institucion, count(*)
-        FROM institucion i LEFT JOIN voluntario v
-        ON (i.id_institucion = v.id_institucion)
-        GROUP BY  v.id_institucion;
+SELECT i.id_institucion, count(*)
+FROM institucion i LEFT JOIN voluntario v
+ON (i.id_institucion = v.id_institucion)
+GROUP BY  i.id_institucion;
+--RTA: muestra todos los id de instituciones, el count(*) devuelve la cantidad de voluntarios de cada intitución
+--     count(*) no ignora nulos así que las intituciones que tienen 1 voluntario en realidad no tienen.
+
+SELECT v.id_institucion, count(*)
+FROM institucion i LEFT JOIN voluntario v
+ON (i.id_institucion = v.id_institucion)
+GROUP BY  v.id_institucion;
+--RTA: muestra todos los id de instituciones que tienen asignadas actualmente los voluntarios.
+--     Hay una institución NULL que es cuando un voluntario no tiene institución.

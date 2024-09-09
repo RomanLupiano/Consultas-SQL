@@ -17,6 +17,7 @@ ALTER TABLE articulo ADD CONSTRAINT chk_posterior_2020_no_inglesa
     
 --d)Sólo se pueden publicar artículos argentinos que contengan hasta 10 palabras claves.
 
+
 --Para el esquema de Proveedores
 --a)Cada proveedor no puede proveer más de 20 productos a una misma sucursal.
 --b)Los nombres de sucursales de Tandil deben comenzar con T.

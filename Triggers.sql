@@ -292,3 +292,19 @@ CHECK(NOT EXISTS(SELECT v.nro_voluntario, count(*)
                 HAVING count(*) > 3));
 
 --ṔROCEDURALMENTE
+CREATE FUNCTION fn_voluntario_max_3_cambios_tarea_al_año
+RETURNS TRIGGER AS $$ 
+BEGIN
+    if ((SELECT count(*) FROM historico 
+        WHERE nro_voluntario = NEW.nro_voluntario 
+        AND fecha_fin )) >= 3 THEN
+        RAISE EXCEPTION 'Los voluntarios no pueden cambiar de institución más de tres veces en un año';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER tgr_voluntario_max_3_cambios_tarea_al_año
+BEFORE INSERT
+ON historico
+FOR EACH ROW EXECUTE FUNCTION fn_voluntario_max_3_cambios_tarea_al_año();
